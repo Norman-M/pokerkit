@@ -18,6 +18,7 @@ from pokerkit.lookups import (
     ShortDeckHoldemLookup,
     StandardBadugiLookup,
     StandardLookup,
+    PokerRunLookup,
 )
 from pokerkit.utilities import Card, CardsLike
 
@@ -280,7 +281,6 @@ class StandardHand(CombinationHand, ABC):
     lookup = StandardLookup()
     card_count = 5
 
-
 class StandardHighHand(StandardHand):
     """The class for standard high hands.
 
@@ -308,6 +308,42 @@ class StandardHighHand(StandardHand):
 
     low = False
 
+
+class PokerRunHand(StandardHand):
+    """The class for standard poker run hands.
+
+    >>> h0 = PokerRunHand('7c5d4h3s2c')
+    >>> h1 = PokerRunHand('7c6d4h3s2c')
+    >>> h2 = PokerRunHand('8c7d6h4s2c')
+    >>> h3 = PokerRunHand('AcAsAd2s4s')
+    >>> h4 = PokerRunHand('TsJsQsKsAs')
+    >>> h0 < h1 < h2 < h3 < h4
+    True
+
+    >>> h = PokerRunHand('4c5dThJsAcKh2h')  # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+        ...
+    ValueError: The cards '4c5dThJsAcKh2h' form an invalid PokerRunHand ...
+    >>> h = PokerRunHand('Ac2c3c4c')
+    Traceback (most recent call last):
+        ...
+    ValueError: The cards 'Ac2c3c4c' form an invalid PokerRunHand hand.
+    >>> h = PokerRunHand(())
+    Traceback (most recent call last):
+        ...
+    ValueError: The cards () form an invalid PokerRunHand hand.
+    
+    >>> h1 = PokerRunHand('AcAcAcAcAc')
+    >>> h2 = PokerRunHand('AcAcAcAcAh')
+    >>> h1 > h2
+    True
+    
+    """
+    
+    lookup = PokerRunLookup()
+    low = False
+    card_count = 5
+    board_card_count = 0
 
 class StandardLowHand(StandardHand):
     """The class for standard low hands.

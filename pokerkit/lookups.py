@@ -42,12 +42,28 @@ class Label(StrEnum):
     """The label of straight."""
     FLUSH: str = 'Flush'
     """The label of flush."""
+    FLUSH_PAIR: str = "Flush with pair"
+    """The label of a flush with a pair."""
     FULL_HOUSE: str = 'Full house'
     """The label of full house."""
+    FLUSH_TWO_PAIR: str = "Flush with two pair"
+    """The label of a flush with two pair."""
     FOUR_OF_A_KIND: str = 'Four of a kind'
     """The label of four of a kind."""
+    FLUSH_THREE: str = "Flush with three of a kind"
+    """The label of a flush with three of a kind."""
     STRAIGHT_FLUSH: str = 'Straight flush'
     """The label of straight flush."""
+    ROYAL_FLUSH: str = 'Royal flush'
+    """The label of the royal flush."""
+    FIVE_OF_A_KIND: str = 'Five of a kind'
+    """The label of four of a kind."""
+    FLUSH_HOUSE: str = 'Flush house'
+    """The label of the Flush house."""
+    FLUSH_FOUR: str = "Flush with four of a kind"
+    """The label for a flush with four of a kind."""   
+    FLUSH_FIVE: str = 'Flush five'
+    """The label of the Flush five."""
 
 
 @dataclass(order=True, frozen=True)
@@ -336,6 +352,48 @@ class StandardLookup(Lookup):
             Label.FOUR_OF_A_KIND,
         )
         self._add_straights(5, (True,), Label.STRAIGHT_FLUSH)
+
+@dataclass
+class PokerRunLookup(Lookup):
+    """The class for standard hand lookups.
+
+    Lookups are used by evaluators. If you want to evaluate poker hands,
+    please subclasses of :class:`pokerkit.hands.Hand` that use this
+    lookup.
+
+    >>> lookup = StandardLookup()
+    >>> e0 = lookup.get_entry('Ah6h7s8c9s')
+    >>> e1 = lookup.get_entry('AhAc6s6hTd')
+    >>> e2 = lookup.get_entry('AcAdAhAsAc')
+    
+    >>> e0 < e1
+    True
+    >>> e0.label
+    <Label.HIGH_CARD: 'High card'>
+    >>> e1.label
+    <Label.TWO_PAIR: 'Two pair'>
+    """
+
+    rank_order = RankOrder.STANDARD
+
+    def _add_entries(self) -> None:
+        self._add_multisets(Counter({1: 5}), (False,), Label.HIGH_CARD)
+        self._add_multisets(Counter({2: 1, 1: 3}), (False,), Label.ONE_PAIR)
+        self._add_multisets(Counter({2: 2, 1: 1}), (False,), Label.TWO_PAIR)
+        self._add_multisets(Counter({3: 1, 1: 2}), (False,), Label.THREE_OF_A_KIND,)
+        self._add_straights(5, (False,), Label.STRAIGHT)
+        self._add_multisets(Counter({1: 5}), (True,), Label.FLUSH)
+        self._add_multisets(Counter({2: 1, 1: 3}), (True,), Label.FLUSH_PAIR)
+        self._add_multisets(Counter({3: 1, 2: 1}), (False,), Label.FULL_HOUSE)
+        self._add_multisets(Counter({2: 2, 1: 1}), (True,), Label.FLUSH_TWO_PAIR)
+        self._add_multisets(Counter({4: 1, 1: 1}), (False,),Label.FOUR_OF_A_KIND,)
+        self._add_multisets(Counter({3: 1, 1: 2}), (True,), Label.FLUSH_THREE,)
+        self._add_straights(5, (True,), Label.STRAIGHT_FLUSH)
+        self._add_multisets(Counter({5: 1}), (False,), Label.FIVE_OF_A_KIND,)
+        self._add_multisets(Counter({3: 1, 2: 1}), (True,), Label.FLUSH_HOUSE,)
+        self._add_multisets(Counter({4: 1, 1: 1}),(True,),Label.FLUSH_FOUR,)
+        self._add_multisets(Counter({5: 1}),(True,),Label.FLUSH_FIVE,)
+
 
 
 @dataclass
