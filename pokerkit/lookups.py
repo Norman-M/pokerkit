@@ -61,7 +61,7 @@ class Label(StrEnum):
     FLUSH_HOUSE: str = 'Flush house'
     """The label of the Flush house."""
     FLUSH_FOUR: str = "Flush with four of a kind"
-    """The label for a flush with four of a kind."""   
+    """The label for a flush with four of a kind."""
     FLUSH_FIVE: str = 'Flush five'
     """The label of the Flush five."""
 
